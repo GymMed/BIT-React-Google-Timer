@@ -36,7 +36,6 @@ function Timer() {
             if (timestampToReach > currentDateTimestamp) {
                 setTimerResult(timestampToReach - currentDateTimestamp);
             } else {
-                console.log("bubu");
                 clearInterval(intervalId);
             }
         }, 1000);
@@ -139,11 +138,6 @@ function Timer() {
     }, [navLinks]);
 
     useEffect(() => {
-        console.log(
-            "nu ka tu cia",
-            navLinks,
-            getNewDynamicLinkData(PAGES_ENUM.Timer)
-        );
         setNavLinks(
             navLinks.map((link) => {
                 return { ...link, ...getNewDynamicLinkData(link.pageType) };
@@ -163,7 +157,6 @@ function Timer() {
                     link.active &&
                     Object.prototype.hasOwnProperty.call(link, "started")
                 ) {
-                    console.log("puka", getNewDynamicLinkData(link.pageType));
                     return {
                         ...link,
                         started: !link.started,
@@ -275,7 +268,6 @@ function Timer() {
             handleOnClickLinkStart();
             return;
         }
-        console.log("offed timer", currentLink.started, currentLink);
     }
 
     function handleOnClickLinkRestart() {

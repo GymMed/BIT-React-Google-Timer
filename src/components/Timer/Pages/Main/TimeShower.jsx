@@ -102,7 +102,7 @@ export default function TimeShower({
         const value = event.target.value.slice(-6);
 
         // const newDateObject = {hours: }
-        console.log(value);
+        // console.log(value);
 
         // setTimerFrom();
     }
@@ -112,7 +112,7 @@ export default function TimeShower({
             {getTemplateBaseOnMode(mode)}
             <input
                 ref={inputRef}
-                className="absolute text-right w-full h-full -z-10 p-2 border bg-pink-200 block rounded pt-1 pb-5 px-3 text-6xl"
+                className="absolute hidden text-right w-full h-full -z-10 p-2 border bg-pink-200 block rounded pt-1 pb-5 px-3 text-6xl"
                 type="tel"
                 name="time"
                 id="time"

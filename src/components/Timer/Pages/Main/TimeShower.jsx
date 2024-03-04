@@ -64,9 +64,7 @@ export default function TimeShower({
     timerHasStarted,
     setTimerFrom,
 }) {
-    const [mode, setMode] = useState(
-        timerHasStarted ? TIMER_MODES_ENUM.Show : TIMER_MODES_ENUM.Edit
-    );
+    const [mode, setMode] = useState(TIMER_MODES_ENUM.Show);
     const inputRef = useRef(null);
 
     function getTemplateBaseOnMode(mode) {

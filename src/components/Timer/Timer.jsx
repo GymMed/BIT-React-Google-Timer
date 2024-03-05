@@ -56,6 +56,9 @@ function Timer() {
             if (timestampToReach > currentDateTimestamp) {
                 setTimerResult(timestampToReach - currentDateTimestamp);
             } else {
+                setTimerResult(0);
+                setTimerStart(0);
+                handleOnClickLinkStart();
                 clearInterval(intervalId);
             }
         }, 1000);
@@ -151,8 +154,8 @@ function Timer() {
     }, [timerFrom]);
 
     const handleOnClickLinkStart = useCallback(() => {
-        setNavLinks(
-            navLinks.map((link) => {
+        setNavLinks((previousNavLinks) =>
+            previousNavLinks.map((link) => {
                 if (
                     link &&
                     link.active &&
@@ -254,7 +257,7 @@ function Timer() {
         }
     }
 
-    function handleOnClickLinkRestart() {
+    const handleOnClickLinkRestart = useCallback(() => {
         setNavLinks((previousNavLink) =>
             previousNavLink.map((link) => {
                 if (
@@ -274,7 +277,7 @@ function Timer() {
                 };
             })
         );
-    }
+    }, [navLinks, getNewDynamicLinkData]);
 
     return (
         <div className="rounded-xl border border-gray-300 shadow">

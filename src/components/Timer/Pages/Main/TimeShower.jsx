@@ -32,13 +32,18 @@ function showTime(timeObject, isRunning = false) {
             ) : (
                 ""
             )}
-            {timeObject.hours > 0 ||
-            timeObject.minutes > 0 ||
-            timeObject.seconds > 0 ? (
-                <DoubleDigits digits={timeObject.seconds} postfix={"s"} />
-            ) : (
-                ""
-            )}
+
+            <DoubleDigits
+                digits={timeObject.seconds}
+                postfix={"s"}
+                showSingleZero={
+                    timeObject.hours > 0 ||
+                    timeObject.minutes > 0 ||
+                    timeObject.seconds > 0
+                        ? false
+                        : true
+                }
+            />
         </div>
     );
 }

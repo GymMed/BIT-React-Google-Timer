@@ -22,11 +22,6 @@ function transformStopwatchToString(stopwatchObject) {
 }
 
 function formatTimestamp(timestamp) {
-    // const timestampDate = new Date(new Date(0).getTime() + timestamp);
-    // console.log(timestamp);
-    // const hours = Math.floor(timestamp / 3600);
-    // const minutes = Math.floor((timestamp % 3600) / 60);
-    // const seconds = timestamp % 60;
     const hours = Math.floor((timestamp / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((timestamp / 1000 / 60) % 60);
     const seconds = Math.floor((timestamp / 1000) % 60);
@@ -35,4 +30,54 @@ function formatTimestamp(timestamp) {
     return { hours, minutes, seconds };
 }
 
-export { transformStopwatchToString, formatTimestamp };
+function capTimeObjectToValidTime(timeObject) {
+    let seconds = timeObject.seconds;
+    let minutes = timeObject.minutes;
+    let hours = timeObject.hours;
+
+    if (seconds > 59) {
+        seconds -= 60;
+        minutes++;
+
+        if (minutes > 59) {
+            minutes -= 60;
+            hours++;
+        }
+    }
+
+    return { hours, minutes, seconds };
+}
+
+function getSecondsAsTimestamp(seconds) {
+    return seconds * 1000;
+}
+
+function getMinutesAsTimestamp(minutes) {
+    const minute = getSecondsAsTimestamp(60);
+    return minute * minutes;
+}
+
+function getHoursAsTimestamp(hours) {
+    const hour = getMinutesAsTimestamp(60);
+    return hour * hours;
+}
+
+function getTimeObjectAsTimestamp(timeObject) {
+    const { hours, minutes, seconds } = timeObject;
+    const timestamp =
+        getHoursAsTimestamp(hours) +
+        getMinutesAsTimestamp(minutes) +
+        getSecondsAsTimestamp(seconds);
+
+    return timestamp;
+}
+
+export {
+    transformStopwatchToString,
+    formatTimestamp,
+    capTimeObjectToValidTime,
+    getSecondsAsTimestamp,
+    getMinutesAsTimestamp,
+    getHoursAsTimestamp,
+    getTimeObjectAsTimestamp,
+};

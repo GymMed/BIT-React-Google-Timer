@@ -3,6 +3,7 @@ import Proptypes from "prop-types";
 export default function DoubleDigitsInputView({
     digits,
     postfix,
+    isForcedInActive = false,
     isActive = false,
 }) {
     function getActivityClasses(activity) {
@@ -11,8 +12,8 @@ export default function DoubleDigitsInputView({
     }
 
     const digitsAsString = digits.toString().padStart(2, "0");
-    const firstDigitActivity = isActive || digits > 9;
-    const secondDigitActivity = isActive || digits > 0;
+    const firstDigitActivity = !isForcedInActive && (isActive || digits > 9);
+    const secondDigitActivity = !isForcedInActive && (isActive || digits > 0);
 
     return (
         <div className="min-w">
@@ -26,7 +27,9 @@ export default function DoubleDigitsInputView({
             </span>
             <span
                 className={
-                    getActivityClasses(isActive || digits > 0) + " text-3xl"
+                    getActivityClasses(
+                        !isForcedInActive && (isActive || digits > 0)
+                    ) + " text-3xl"
                 }
             >
                 {postfix}
@@ -38,5 +41,6 @@ export default function DoubleDigitsInputView({
 DoubleDigitsInputView.propTypes = {
     digits: Proptypes.number,
     postfix: Proptypes.string,
+    isForcedInActive: Proptypes.bool,
     isActive: Proptypes.bool,
 };

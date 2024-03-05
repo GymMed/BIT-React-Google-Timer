@@ -14,9 +14,14 @@ const TIMER_MODES_ENUM = {
     Length: 2,
 };
 
-function showTime(timeObject) {
+function showTime(timeObject, isRunning = false) {
     return (
-        <div className="flex gap-5 border-b border-gray-300 px-3 pt-1 pb-5">
+        <div
+            className={
+                (isRunning ? "border-transparent" : "border-gray-300") +
+                " flex gap-5 border-b px-3 pt-1 pb-5"
+            }
+        >
             {timeObject.hours > 0 ? (
                 <DoubleDigits digits={timeObject.hours} postfix={"h"} />
             ) : (
@@ -39,11 +44,6 @@ function showTime(timeObject) {
 }
 
 function showEdit(timeObject, usedOriginal) {
-    console.log(
-        "used",
-        usedOriginal,
-        !usedOriginal && (timeObject.hours > 0 || timeObject.minutes > 9)
-    );
     return (
         <div className="flex gap-5 border-b-2 border-blue-500 px-3 pt-1 pb-5">
             <DoubleDigitsInputView
@@ -72,7 +72,12 @@ function showEdit(timeObject, usedOriginal) {
     );
 }
 
-export default function TimeShower({ timeObject, setTimerFrom }) {
+export default function TimeShower({
+    timeObject,
+    setRunningTime,
+    setTimerFrom,
+    activeLink,
+}) {
     const [mode, setMode] = useState(TIMER_MODES_ENUM.Show);
     const [savedTimeObject, setSavedTimeObject] = useState(timeObject);
     const [usedOriginalTimeObject, setUsedOriginalTimeObject] = useState(true);
@@ -89,7 +94,7 @@ export default function TimeShower({ timeObject, setTimerFrom }) {
             }
             case TIMER_MODES_ENUM.Show:
             default: {
-                return showTime(timeObject);
+                return showTime(timeObject, activeLink.started);
             }
         }
     }
@@ -127,6 +132,7 @@ export default function TimeShower({ timeObject, setTimerFrom }) {
         setSavedTimeObject(fixedTimeObject);
         //add 1 second for interval delay
         setTimerFrom(newTime + getSecondsAsTimestamp(1));
+        setRunningTime(newTime);
         event.target.value = "";
         setMode(TIMER_MODES_ENUM.Show);
     }
@@ -150,5 +156,7 @@ export default function TimeShower({ timeObject, setTimerFrom }) {
 
 TimeShower.propTypes = {
     timeObject: PropTypes.object,
+    setRunningTime: PropTypes.func,
     setTimerFrom: PropTypes.func,
+    activeLink: PropTypes.object,
 };

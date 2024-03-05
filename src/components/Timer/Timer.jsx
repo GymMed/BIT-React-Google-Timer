@@ -8,24 +8,44 @@ import Stopwatch from "./Pages/Stopwatch/Stopwatch";
 import HourglassIcon from "../../assets/hourglass.svg?react";
 import StopwatchIcon from "../../assets/stopwatch.svg?react";
 import Body from "./Body/Body";
-
-// used for dynamic data, needed for updating useState
-// variable that depends on other useState
-const PAGES_ENUM = {
-    Timer: 0,
-    Stopwatch: 1,
-};
+import { PAGES_ENUM } from "../../utils/pagesManager";
+import {
+    capStopwatchObjectToValidTime,
+    getMinutesAsTimestamp,
+    getSecondsAsTimestamp,
+} from "../../utils/timeManager";
 
 function Timer() {
-    const [timerFrom, setTimerFrom] = useState(5 * 60 * 1000 + 1000);
+    const [timerFrom, setTimerFrom] = useState(
+        getMinutesAsTimestamp(5) + getSecondsAsTimestamp(1)
+    );
     const [timerStart, setTimerStart] = useState(timerFrom);
-    const [timerResult, setTimerResult] = useState(5 * 60 * 1000);
+    const [timerResult, setTimerResult] = useState(getMinutesAsTimestamp(5));
     const [stopwatchTime, setStopwatchTime] = useState({
         hours: 0,
         minutes: 0,
         seconds: 0,
         millisecondsTens: 0,
     });
+
+    const [navLinks, setNavLinks] = useState([
+        {
+            icon: <HourglassIcon />,
+            text: "TIMER",
+            active: true,
+            started: false,
+            pageType: PAGES_ENUM.Timer,
+            // ...getNewDynamicLinkData(PAGES_ENUM.Timer),
+        },
+        {
+            icon: <StopwatchIcon />,
+            text: "STOPWATCH",
+            active: false,
+            started: false,
+            pageType: PAGES_ENUM.Stopwatch,
+            // ...getNewDynamicLinkData(PAGES_ENUM.Stopwatch),
+        },
+    ]);
 
     const handleTimerStart = useCallback(() => {
         const timestampToReach = new Date().getTime() + timerStart;
@@ -73,7 +93,7 @@ function Timer() {
                             <Main
                                 activeLink={getActiveLink()}
                                 runningTime={timerResult}
-                                timerFrom={timerFrom}
+                                setRunningTime={setTimerResult}
                                 setTimerFrom={setTimerFrom}
                                 stopTimer={handleOnClickTimer}
                             />
@@ -93,32 +113,13 @@ function Timer() {
         },
         [
             timerResult,
-            timerFrom,
             stopwatchTime,
             handleTimerStart,
             handleTimerStop,
             handleOnRestartTimer,
+            getActiveLink,
         ]
     );
-
-    const [navLinks, setNavLinks] = useState([
-        {
-            icon: <HourglassIcon />,
-            text: "TIMER",
-            active: true,
-            started: false,
-            pageType: PAGES_ENUM.Timer,
-            // ...getNewDynamicLinkData(PAGES_ENUM.Timer),
-        },
-        {
-            icon: <StopwatchIcon />,
-            text: "STOPWATCH",
-            active: false,
-            started: false,
-            pageType: PAGES_ENUM.Stopwatch,
-            // ...getNewDynamicLinkData(PAGES_ENUM.Stopwatch),
-        },
-    ]);
 
     const previousNavLinksRef = useRef(0);
     const stopwatchIntervalRef = useRef(0);
@@ -176,31 +177,14 @@ function Timer() {
             setStopwatchTime((previousStopwatchTime) => {
                 let newMillisecondsTens =
                     previousStopwatchTime.millisecondsTens + 1;
-                let newSeconds = previousStopwatchTime.seconds;
-                let newMinutes = previousStopwatchTime.minutes;
-                let newHours = previousStopwatchTime.hours;
 
-                if (newMillisecondsTens > 99) {
-                    newMillisecondsTens = 0;
-                    newSeconds += 1;
-
-                    if (newSeconds > 59) {
-                        newSeconds = 0;
-                        newMinutes += 1;
-
-                        if (newMinutes > 59) {
-                            newMinutes = 0;
-                            newHours += 1;
-                        }
-                    }
-                }
+                let newStopwatchTime = capStopwatchObjectToValidTime({
+                    ...previousStopwatchTime,
+                    millisecondsTens: newMillisecondsTens,
+                });
 
                 return {
-                    ...previousStopwatchTime,
-                    hours: newHours,
-                    minutes: newMinutes,
-                    seconds: newSeconds,
-                    millisecondsTens: newMillisecondsTens,
+                    ...newStopwatchTime,
                 };
             });
         }, 10);
@@ -300,7 +284,7 @@ function Timer() {
                 getDynamicInfo={getNewDynamicLinkData}
             />
             <Body>{getCurrentContent()}</Body>
-            <Footer>
+            <Footer activeLink={getActiveLink()} runningTime={timerStart}>
                 <Button
                     text={getActivateButtonText()}
                     status={STATUSES_ENUM.Information}

@@ -48,6 +48,30 @@ function capTimeObjectToValidTime(timeObject) {
     return { hours, minutes, seconds };
 }
 
+function capStopwatchObjectToValidTime(stopwatchObject) {
+    let millisecondsTens = stopwatchObject.millisecondsTens;
+    let seconds = stopwatchObject.seconds;
+    let minutes = stopwatchObject.minutes;
+    let hours = stopwatchObject.hours;
+
+    if (millisecondsTens > 99) {
+        millisecondsTens = 0;
+        seconds += 1;
+
+        if (seconds > 59) {
+            seconds = 0;
+            minutes += 1;
+
+            if (minutes > 59) {
+                minutes = 0;
+                hours += 1;
+            }
+        }
+    }
+
+    return { hours, minutes, seconds, millisecondsTens };
+}
+
 function getSecondsAsTimestamp(seconds) {
     return seconds * 1000;
 }
@@ -72,9 +96,17 @@ function getTimeObjectAsTimestamp(timeObject) {
     return timestamp;
 }
 
+// function calculateTimeFraction(startTime, startTimestamp, currentTime)
+// {
+//     const currentTimestamp = new Date().getTime();
+
+//     return ;
+// }
+
 export {
     transformStopwatchToString,
     formatTimestamp,
+    capStopwatchObjectToValidTime,
     capTimeObjectToValidTime,
     getSecondsAsTimestamp,
     getMinutesAsTimestamp,

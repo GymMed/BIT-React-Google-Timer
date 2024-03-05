@@ -2,12 +2,23 @@ import PropTypes from "prop-types";
 import { formatTimestamp } from "../../../../utils/timeManager";
 import TimeShower from "./TimeShower";
 
-function Main({ runningTime, timeFrom, setTimerFrom, stopTimer }) {
+function Main({
+    activeLink,
+    runningTime,
+    setRunningTime,
+    setTimerFrom,
+    stopTimer,
+}) {
     const timeObject = formatTimestamp(runningTime);
 
     return (
         <div onClick={() => stopTimer()}>
-            <TimeShower timeObject={timeObject} setTimerFrom={setTimerFrom} />
+            <TimeShower
+                timeObject={timeObject}
+                setRunningTime={setRunningTime}
+                setTimerFrom={setTimerFrom}
+                activeLink={activeLink}
+            />
         </div>
     );
 }
@@ -15,7 +26,7 @@ function Main({ runningTime, timeFrom, setTimerFrom, stopTimer }) {
 Main.propTypes = {
     activeLink: PropTypes.object,
     runningTime: PropTypes.number,
-    timeFrom: PropTypes.number,
+    setRunningTime: PropTypes.func,
     setTimerFrom: PropTypes.func,
     stopTimer: PropTypes.func,
 };
